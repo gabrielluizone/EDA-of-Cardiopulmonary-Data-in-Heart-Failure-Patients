@@ -1,0 +1,42 @@
+"Os dados apresentados na planilha ""Dados"" são provenientes de um estudo sobre teste de esforço cardiopulmonar "	
+em pacientes com insuficiência cardíaca realizado no InCor da Faculdade de Medicina da USP pela Dra.Ana Maria	
+Fonseca Wanderley Braga.	
+Um dos objetivos do estudo é comparar os grupos formados pelas diferentes etiologias quanto às respostas respi-	
+ratórias e metabólicas obtidas do teste de esforço cardiopulmonar.	
+Outro objetivo do estudo é saber se alguma das características observadas (ou combinação delas) pode ser utilizada	
+como fator prognóstico de óbito.	
+	
+Definição de variáveis	
+	
+ Ident	Identificação do paciente
+ Iniciais	Iniciais do nome do paciente
+ Etiologia	CH: chagásicos, ID: idiopáticos, IS: isquêmicos, C: controle
+ Sexo	F: feminino, M: masculino
+ Data espirométrico	data de realização do teste de esforço cardiopulmonar
+ Idade 	idade do paciente em anos
+ Altura 	altura do paciente em cm
+ Peso 	peso do paciente em kg
+ Superfície corporal	superfície corpórea
+ IMC 	índice de massa corpórea (kg/m2)
+ Classe funcional NYHA	classe funcional pelo critério NYHA (1 a 4)
+ Classe funcional WEBER	classe funcional pelo critério Weber (A a E)
+ Carga	carga utilizada na esteira ergométrica
+ FC	freqüência cardíaca em batimentos por minuto
+ VO2	consumo de oxigênio em ml/(kg.min)
+ RER	razão de troca respiratória
+ VO2/FC 	pulso de oxigênio em ml/batimentos
+ VE/VO2 	equivalente ventilatório de consumo de oxigênio
+ VE/VCO2 	equivalente ventilatório de dióxido de carbono
+	
+Momentos de avaliação 	
+das variáveis	
+	
+  REP	repouso
+  LAN	limiar anaeróbio
+  PCR	ponto de compensação respiratório
+  PICO	pico de exercício
+	
+Referência bibliográfica	
+	
+Braga, A.M.F.W. (1998). Comportamento e valor prognóstico das variáveis obtidas no teste de esforço cardiopulmonar	
+em portadores de insuficiência cardíaca. Tese de doutoramento. Faculdade de Medicina da Universidade de São Paulo.	

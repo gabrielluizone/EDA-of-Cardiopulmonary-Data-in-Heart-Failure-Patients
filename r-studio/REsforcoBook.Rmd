@@ -1,0 +1,176 @@
+---
+title: "R Esforco | **Notebook**"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+```{r setup, include=FALSE}
+# Instalações de Bibliotecas
+if(!require(ggplot2)) install.packages('ggplot2'); library(ggplot2)
+if(!require(tidyverse)) install.packages('tidyverse'); library(tidyverse)
+if(!require(psych)) install.packages('psych'); library(psych)
+if(!require(knitr)) install.packages('knitr'); library(knitr)
+
+# Carregamento de Dados e Tratamento
+df <- read.csv('/cloud/project/data/R-Esforcor.csv', sep=';')
+
+df$Paciente = as.character(df$Paciente)
+
+df <- df %>%
+  mutate_at(vars(all_of(c('Peso', 'Idade', 'VO2_REP', 'VO2_LAN', 'VO2_PCR', 'VO2_PIC'))),
+                 ~ as.numeric(sub(',', '.', .)))
+
+df$NYHA <- c(2,1,2,2,4,1,3,2,3,1,3,3,1,4,2,2,2,2,2,2,2,3,3,3,2,3,3,3,2,2,2,4,3,1,4,3,3,1,2,1,4,1,1,4,1,1,1,1,1,1,4,4,3,2,3,4,4,4,4,3,2,2,1,3,3,3,1,2,2,1,1,1,1,1,1,2,1,1,1,2,3,3,1,3,4,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
+
+# Medidas de Tendência dos Dados
+summary(df)
+describe(df)
+```
+
+```{r histogram_rep, fig.cap="Histograma de Consumo de O2 em Repouso"}
+rep <- ggplot(data = df, aes(x = VO2_REP)) +
+  geom_histogram(binwidth = 0.5, color = '#2a2f30', fill = '#454f52') +
+  geom_vline(aes(xintercept = mean(VO2_REP)), color = '#9ed5e6', linetype = 'solid', size = 0.5) +
+  labs(title = 'Histograma de Consumo de O2 em Repouso',
+       x = 'Consumo (ml/kg.min)', y = 'Frequência') +
+  theme(plot.title = element_text(size = 12, hjust = 0),
+        axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10))
+ggsave("hist_rep.png", plot=rep, dpi = 600)
+rep
+```
+
+```{r histogram_lan, fig.cap="Histograma de Consumo de O2 na Limiar Anaeróbio"}
+lan <- ggplot(data = df, aes(x = VO2_LAN)) +
+  geom_histogram(binwidth = 1, color = '#2a2f30', fill = '#454f52') +
+  geom_vline(aes(xintercept = mean(VO2_LAN, na.rm=TRUE)), color = '#9ed5e6', linetype = 'solid', size = 0.5) +
+  labs(title = 'Histograma de Consumo de O2 na Limiar Anaeróbio',
+       x = 'Consumo (ml/kg.min)', y = 'Frequência') +
+  theme(plot.title = element_text(size = 12, hjust = 0),
+        axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10))
+ggsave("hist_lan.png", plot=lan, dpi = 600)
+lan
+```
+
+```{r histogram_pcr, fig.cap="Histograma de Consumo de O2 no Ponto de Compensação Respiratório"}
+pcr <- ggplot(data = df, aes(x = VO2_PCR)) +
+  geom_histogram(binwidth = 1.5, color = '#2a2f30', fill = '#454f52') + 
+  geom_vline(aes(xintercept = mean(VO2_PCR, na.rm=TRUE)), color = '#9ed5e6', linetype = 'solid', size = 0.5) +
+  labs(title = 'Hist. de Consumo de O2 no Ponto de Compensação Respiratório',
+       x = 'Consumo (ml/kg.min)', y = 'Frequência') +
+  theme(plot.title = element_text(size = 12, hjust = 0),
+        axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10))
+ggsave("hist_pcr.png", plot=pcr, dpi = 600)
+pcr
+```
+
+```{r histogram_pic, fig.cap="Histograma de Consumo de O2 no Pico de Exercício"}
+pic <- ggplot(data = df, aes(x = VO2_PIC)) +
+  geom_histogram(binwidth = 2, color = '#2a2f30', fill = '#454f52') +
+  geom_vline(aes(xintercept = mean(VO2_PIC)), color = '#9ed5e6', linetype = 'solid', size = 0.5) +
+  labs(title = 'Histograma de Consumo de O2 no Pico de Exercício',
+       x = 'Consumo (ml/kg.min)', y = 'Frequência') +
+  theme(plot.title = element_text(size = 12, hjust = 0),
+        axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10))
+ggsave("hist_pic.png", plot=pic, dpi = 600)
+pic
+```
+```{r boxplot_all_vo2, fig.cap="Boxplots das Variáveis de Consumo de O2"}
+df_box <- tidyr::pivot_longer(df, cols = starts_with("VO2"), names_to = "type")
+
+boxplot_all_vo2 <- ggplot(data = df_box, aes(x = type, y = value)) +
+  geom_boxplot(color = '#2a2f30', fill = '#454f52') +
+  labs(title='Boxplots das Variáveis de Consumo de O2',
+       x = 'Variável', y = 'Consumo (ml/kg.min)') +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 10)) +
+  facet_wrap(~ type, scales = 'free', ncol = 2, 
+  labeller=labeller(type=c(VO2_REP='Consumo de O2 em Repouso',
+                           VO2_LAN='Consumo de O2 na Limiar Anaeróbio',
+                           VO2_PCR='O2 no Ponto de Comp. Respiratório',
+                           VO2_PIC='Consumo de O2 no Pico de Exercício')))
+boxplot_all_vo2
+```
+Certainly! Here's the completion of your code in the R Notebook format:
+
+```{r freq_table, results='asis', echo=FALSE}
+table <- table(df$NYHA)
+
+# Frequência relativa
+freqrel <- round(table * 100 / sum(table), 2)
+
+# Frequência absoluta acumulada
+frequencia_absoluta_acumulada <- cumsum(table)
+
+# Frequência relativa acumulada
+frequencia_relativa_acumulada <- round(cumsum(freqrel), 2)
+
+nyha_table <- data.frame(NYHA = c(0, 1, 2, 3, 4),
+                         FreqAbsoluta = table,
+                         FreqRelativa = freqrel,
+                         FreqAbsAcum = frequencia_absoluta_acumulada,
+                         FreqRelAcum = frequencia_relativa_acumulada,
+                         Total = sum(table))
+
+# Plotagem da Classe em Barras
+barplot <- ggplot(nyha_table, aes(x = factor(NYHA), y = FreqAbsoluta, fill = factor(NYHA))) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = FreqAbsoluta), vjust = -0.5, color = "black", size = 4) +
+  labs(title = "Frequência das Classes Funcionais NYHA",
+       x = "Classe Funcional NYHA",
+       y = "Frequência") +
+  ylim(0, 43) +
+  scale_fill_manual(values = c("#59493b", "#3b5946", "#3b4659", "#593b3b", "#5c5c5c"),
+                    name = "Classe Funcional NYHA",
+                    guide = "none")
+barplot
+```
+
+```{r pie_chart, results='asis', echo=FALSE}
+# Plotagem em Gráfico de Setores
+pizza <- ggplot(nyha_table, aes(x = '', y = FreqRelativa, fill = factor(NYHA))) +
+  geom_bar(stat = 'identity', width = 1) + coord_polar(theta = 'y') +
+  labs(title = "Proporção das Classes Funcionais NYHA",
+       fill = "Classe",
+       x = NULL,
+       y = NULL) +
+  scale_fill_manual(values = c("#59493b", "#3b5946", "#3b4659", "#593b3b", "#5c5c5c")) +
+  geom_text(aes(label = paste0(round(FreqRelativa, 1), " %")),
+            position = position_stack(vjust = 0.5))
+pizza
+```
+
+```{r, echo=FALSE}
+# Save the pie chart as an image
+ggsave("Pizza.png", plot = pizza, dpi = 600)
+```
+
+```{r}
+# Save the notebook as HTML
+knitr::knit("your_notebook_file.Rmd")
+```
+
+```{r, echo=FALSE}
+# Save the R Notebook as HTML
+rmarkdown::render("your_notebook_file.Rmd")
+```
+
+Please make sure to replace `"your_notebook_file.Rmd"` with the actual filename you'd like to use for your R Notebook. The above code completes your original script and includes the generation of the bar plot and pie chart, along with saving the notebook and rendering it as an HTML output.
+
+
